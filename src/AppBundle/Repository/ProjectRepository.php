@@ -171,6 +171,7 @@ class ProjectRepository extends \Doctrine\ORM\EntityRepository
         $phpExcelObject = $php_excel->createPHPExcelObject();
         $phpExcelObject->getActiveSheet()->setTitle('Data');
         $phpExcelObject->setActiveSheetIndex(0);
+        $index = 0;
         if(count($rs) > 0){
             $item = json_decode($rs[0]->getAnswer(),true);
             $len = count($item[0]['config']);
@@ -183,13 +184,15 @@ class ProjectRepository extends \Doctrine\ORM\EntityRepository
             foreach ($rs as $key => $val){
                 $answer = json_decode($val->getAnswer(),true);
                 foreach ($answer as $k => $item) {
-                    $phpExcelObject->getActiveSheet()->setCellValue('A'.($k + 2),$item['no']);
-                    $phpExcelObject->getActiveSheet()->setCellValue('B'.($k + 2),$item['card']);
+
+                    $phpExcelObject->getActiveSheet()->setCellValue('A'.($k + $index + 2),$item['no']);
+                    $phpExcelObject->getActiveSheet()->setCellValue('B'.($k + $index + 2),$item['card']);
                     for($i = 0;$i < $len;$i++){
-                        $phpExcelObject->getActiveSheet()->setCellValue($col[$i + 2].($k + 2),$item['config'][$i]);
+                        $phpExcelObject->getActiveSheet()->setCellValue($col[$i + 2].($k + $index + 2),$item['config'][$i]);
                     }
-                    $phpExcelObject->getActiveSheet()->setCellValue($col[$len + 2].($k + 2),$item['isSelected']);
+                    $phpExcelObject->getActiveSheet()->setCellValue($col[$len + 2].($k + $index + 2),$item['isSelected']);
                 }
+                $index += count($answer);
             }
         }
         $writer = $php_excel->createWriter($phpExcelObject, 'Excel5');
