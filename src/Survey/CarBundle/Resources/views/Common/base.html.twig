@@ -1,0 +1,49 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <!-- 上述3个meta标签*必须*放在最前面，任何其他内容都*必须*跟随其后！ -->
+    <meta name="description" content="">
+    <meta name="author" content="">
+    <link rel="shortcut icon" href="http://pdt.idataway.com/Images/enableq.ico" type="image/x-icon">
+    <title>后台管理系统</title>
+    <script src="{{ asset('resource/js/jquery-3.3.1.min.js') }}"></script>
+    <script src="{{ asset('resource/js/layer/layer.js') }}"></script>
+    <link href="{{ asset('resource/bootstrap-3.3.7/css/bootstrap.css') }}" rel="stylesheet">
+    <link href="{{ asset('resource/css/dashboard.css') }}" rel="stylesheet">
+    <script src="{{ asset('resource/bootstrap-3.3.7/js/bootstrap.js') }}"></script>
+    <script src="{{ asset('bundles/fosjsrouting/js/router.min.js') }}"></script>
+    <script src="{{ path('fos_js_routing_js', { callback: 'fos.Router.setData' }) }}"></script>
+    <script src="{{ asset('resource/js/common.js') }}"></script>
+    {% block css %}{% endblock %}
+    {% block js %}{% endblock %}
+</head>
+<body sip-shortcut-listen="true" style="">
+<nav class="navbar navbar-inverse navbar-fixed-top">
+    <div class="container-fluid">
+        <div class="navbar-header">
+            <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar"
+                    aria-expanded="false" aria-controls="navbar">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            <a class="navbar-brand" href="#">后台管理系统</a>
+        </div>
+    </div>
+</nav>
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-sm-3 col-md-2 sidebar">
+            <ul class="nav nav-sidebar">
+                <li class="active"><a href="{{ path('survey_car_project') }}">项目列表</a></li>
+            </ul>
+        </div>
+        {% block body %}{% endblock %}
+    </div>
+</div>
+</body>
+</html>

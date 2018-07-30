@@ -1,0 +1,48 @@
+<?php
+/**
+ * Created by PhpStorm.
+ * User: zp
+ * Date: 2018/7/23
+ * Time: 下午4:22
+ */
+
+namespace AppBundle\Entity;
+use Doctrine\ORM\Mapping as ORM;
+
+/**
+ * Answer
+ *
+ * @ORM\Entity(repositoryClass="AppBundle\Repository\AnswerRepository")
+ * @ORM\Table(name="answer")
+ */
+class Answer
+{
+    /**
+     * @var int
+     *
+     * @ORM\Column(name="id", type="integer")
+     * @ORM\Id
+     * @ORM\GeneratedValue(strategy="AUTO")
+     */
+    private $id;
+
+    /**
+     * @ORM\Column(type="integer")
+     */
+    private $project_id;
+
+    /**
+     * @ORM\Column(type="string",length=30)
+     */
+    private $respondent_no;
+
+    /**
+     * @ORM\Column(type="string",length=30)
+     */
+    private $city;
+
+    /**
+     * @ORM\Column(type="text")
+     */
+    private $answer;
+}

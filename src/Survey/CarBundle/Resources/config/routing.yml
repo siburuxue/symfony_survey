@@ -1,0 +1,34 @@
+survey_car_homepage:
+    path:     /home
+    defaults: { _controller: SurveyCarBundle:Default:index }
+survey_car_project:
+    path:     /project/index
+    defaults: { _controller: SurveyCarBundle:Project:index }
+survey_car_project_list:
+    path:     /project/list
+    defaults: { _controller: SurveyCarBundle:Project:list }
+survey_car_project_update:
+    path:     /project/update
+    defaults: { _controller: SurveyCarBundle:Project:update }
+survey_car_project_insert:
+    path:     /project/insert
+    defaults: { _controller: SurveyCarBundle:Project:insert }
+survey_car_project_delete:
+    path:     /project/delete
+    defaults: { _controller: SurveyCarBundle:Project:delete }
+survey_car_project_import:
+    path:     /project/import
+    defaults: { _controller: SurveyCarBundle:Project:import }
+survey_car_project_survey:
+    path:     /project/suvrey/{project_id}
+    defaults: { _controller: SurveyCarBundle:Project:survey }
+    requirements:
+        project_id: '\d+'
+survey_car_project_save:
+    path:     /project/save
+    defaults: { _controller: SurveyCarBundle:Project:save }
+survey_car_project_export:
+    path:     /project/export/{project_id}
+    defaults: { _controller: SurveyCarBundle:Project:export }
+    requirements:
+            project_id: '\d+'

@@ -1,0 +1,155 @@
+{% extends 'SurveyCarBundle:Common:base.html.twig' %}
+{% block js %}
+    <script>
+        $(function () {
+            _global.registe('.table-box');
+            var layer_index = null;
+            //画面加载
+            var routing = Routing.generate('survey_car_project_list');
+            $('.table-box').load(routing,_global.pagination);
+            //新建
+            $('#new-project').click(function () {
+                var obj = $('#txt_name').clone();
+                obj.attr('id','').prop('hidden',false).addClass('txt_name').css('width','500px').css('height','35px').css('margin-left','10px').css('margin-top','15px');
+                layer_index = layer.open({
+                    title:'添加项目',
+                    type:1,
+                    content:obj.get(0).outerHTML,
+                    btn:['保存','取消'],
+                    area:['520px','auto'],
+                    yes:save_project,
+                    cancel:function (index) {
+                        layer.close(index);
+                    }
+                });
+                $('.txt_name').focus();
+            });
+            //更新
+            var id = null;
+            $(document).on('click','.edit',function () {
+                id = $(this).data('id');
+                var name = $(this).data('name');
+                var obj = $('#txt_name').clone();
+                obj.attr('id','').prop('hidden',false).addClass('txt_name').css('width','500px').css('height','35px').css('margin-left','10px').css('margin-top','15px');
+                layer_index = layer.open({
+                    title:'编辑项目',
+                    type:1,
+                    content:obj.get(0).outerHTML,
+                    btn:['保存','取消'],
+                    area:['520px','auto'],
+                    yes:save_project,
+                    cancel:function (index) {
+                        layer.close(index);
+                    }
+                });
+                $('.txt_name').val('').focus().val(name);
+            });
+            $(document).on('keydown','.txt_name',function (e) {
+                if(e.keyCode == 13){
+                    save_project(layer_index);
+                }
+            });
+            function save_project(index) {
+                if(id == null){
+                    var name = $('.txt_name').val();
+                    if(name.trim() == ''){
+                        layer.msg('请输入项目名称',{time:1500});
+                        return false;
+                    }
+                    var setting = {
+                        url: Routing.generate('survey_car_project_insert'),
+                        data: {
+                            name:name
+                        },
+                        success: function (data) {
+                            if(data.flg =='success'){
+                                layer.msg(data.msg,{time:1500},function () {
+                                    layer.close(index);
+                                    _global.reload();
+                                });
+                            }else{
+                                layer.msg(data.msg,{time:1500});
+                            }
+                        }
+                    };
+                    ajax_common(setting);
+                }else{
+                    var name = $('.txt_name').val();
+                    if(name.trim() == ''){
+                        layer.msg('请输入项目名称',{time:1500});
+                        return false;
+                    }
+                    var setting = {
+                        url: Routing.generate('survey_car_project_update'),
+                        data: {
+                            name:name,
+                            id:id,
+                        },
+                        success: function (data) {
+                            if(data.flg =='success'){
+                                layer.msg(data.msg,{time:1500},function () {
+                                    layer.close(index);
+                                    _global.reload();
+                                });
+                            }else{
+                                layer.msg(data.msg,{time:1500});
+                            }
+                        }
+                    };
+                    ajax_common(setting);
+                }
+            }
+            //删除
+            $(document).on('click','.delete',function () {
+                if (confirm("警告！！！数据删除后无法恢复！")) {
+                    var setting = {
+                        url: Routing.generate('survey_car_project_delete'),
+                        data: {
+                            'id': $(this).data('id'),
+                        },
+                        success: function () {
+                            _global.reload();
+                        }
+                    };
+                    ajax_common(setting);
+                }
+            });
+            //导入
+            var project_id = null;
+            $(document).on('click','.import',function () {
+                project_id = $(this).data('id');
+                $('#file').click();
+            });
+            //上传文件
+            $('#file').change(function () {
+                var data = new FormData();
+                data.append('id',project_id);
+                data.append('file',this.files[0]);
+                var setting = {
+                    processData:false,
+                    contentType:false,
+                    async:false,
+                    url: Routing.generate('survey_car_project_import'),
+                    data: data,
+                    success: function (data) {
+                        layer.msg(data.msg,{time:1500});
+                    }
+                };
+                ajax_common(setting);
+            });
+        });
+    </script>
+{% endblock %}
+{% block body %}
+    <form id="forms" enctype="multipart/form-data">
+        <input type="text" id="txt_name" name='txt_name' hidden value=""/>
+        <div class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 main">
+            <h1 class="page-header">
+                项目列表
+                <button type="button" class="btn btn-primary btn-large" id="new-project"><span class="glyphicon glyphicon-plus" aria-hidden="true"></span> 新建</button></h1>
+                <input type="text" id="txt_name" class="hidden" value="" placeholder="请输入项目名称">
+                <input type="file" id="file" class="hidden" value="" name="file">
+            <div class="table-responsive table-box"></div>
+        </div>
+    </form>
+{% endblock %}

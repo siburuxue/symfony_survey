@@ -1,0 +1,131 @@
+<!doctype HTML>
+<html>
+    <head>
+        <link rel="shortcut icon" href="http://pdt.idataway.com/Images/enableq.ico" type="image/x-icon">
+        <style>
+            *{ margin:0;padding:0;}
+            html,body{width:100%;height:100%;overflow:hidden}
+            #box{width:100%;height:100%;display:inline-block;zoom:1;text-align:center;position: relative}
+            #container{height:80%;width:75%;position:relative;display:inline-block;margin-top:3%}
+            hr{width:75%;display:inline-block;}
+            #footer{width:75%;display:inline-block;padding-top:5px;text-align:left}
+            #header{width:auto;height:10%;text-align:left;padding-top:1%;padding-left:1%}
+            #no,select{width:300px;height:30px;margin-right:20px;font-size:large}
+            #no{padding-left:5px;}
+            #search{height:30px;display:inline-block;background:#428bca;line-height: 30px;text-align:center;width:200px;color:white;border-radius:5px;cursor:default;}
+            .body{width:100%;height:auto;padding-top:20px;visibility: hidden}
+            .item{width:19%;float:left;margin-right:5px;border:1px solid #c9c9c9;border-radius:20px;}
+            .item div{margin-top:10px;}
+            .none{height:100%;font-size:x-large}
+            .item:hover{background:orange}
+            img{width:218px;}
+        </style>
+        <script src="{{ asset('resource/js/jquery-3.3.1.min.js') }}"></script>
+        <script src="{{ asset('resource/js/layer/layer.js') }}"></script>
+        <script src="{{ asset('bundles/fosjsrouting/js/router.min.js') }}"></script>
+        <script src="{{ path('fos_js_routing_js', { callback: 'fos.Router.setData' }) }}"></script>
+        <script src="{{ asset('resource/js/common.js') }}"></script>
+        <script>
+            String.prototype.PadLeft = function (len, charStr) {
+                var s = this + '';
+                return new Array(len - s.length + 1).join(charStr, '') + s;
+            };
+            var json = [];
+            var _no = null;
+            var _city = null;
+            $(function (){
+                var len = $('.body').length.toString().length;
+                var height = $('.item:eq(0)').css('height');
+                $('.item').css('height',height);
+                height = height.replace('px','');
+                var marginTop = (height - 33 * 6) / 7;
+                $('.none div').css('margin-top',marginTop + 'px');
+                $('.none div').css('margin-bottom',marginTop + 'px');
+                $('#search').click(function () {
+                    if($('#no').val().trim() == ''){
+                        layer.msg('请输入编号',{time:1000});
+                        return false;
+                    }
+                    if($('#city').val() == ''){
+                        layer.msg('请选择城市',{time:1000});
+                        return false;
+                    }
+                    _no = $('#no').val().trim();
+                    _city = $('#city').val().trim();
+                    $('.body:first').css('visibility','visible');
+                });
+                $('.item').click(function () {
+                    var _self = $(this);
+                    if(!_self.hasClass('none')){
+                        _self.data('isSelected','1');
+                    }
+                    _self.parent().find('.item:not(:last)').each(function () {
+                        json.push({
+                            no:$('#no').val(),
+                            card:"q" + $(this).parents('.body').data('question').toString().PadLeft(len,'0') + '_' + $(this).data('index'),
+                            config:$(this).data('config'),
+                            isSelected:$(this).data('isSelected') || 0
+                        });
+                    });
+                    _self.parent().remove();
+                    $('.body:first').css('visibility','visible');
+                    if($('.body').length == 0){
+                        layer.msg('答题结束');
+                        ajax_common({
+                            url:Routing.generate('survey_car_project_save'),
+                            data:{
+                                project_id:"{{ project_id }}",
+                                no:_no,
+                                city:_city,
+                                json:JSON.stringify(json)
+                            },
+                            success:function () {
+
+                            }
+                        })
+                    }
+                });
+            });
+        </script>
+    </head>
+    <body>
+        <div id="box">
+            <div id="container">
+                <div id="header">
+                    <input type="text" id="no" name="no" placeholder="请输入编号">
+                    <select id="city" name="city">
+                        <option value="">请选择城市</option>
+                        {% for val in city %}
+                            <option value="{{ val.id }}">{{ val.name }}</option>
+                        {% endfor %}
+                    </select>
+                    <div id="search">开始答题</div>
+                </div>
+                {% for value in list %}
+                <div class="body" data-question="{{ value.question_id }}">
+                    {% for val in value.cars %}
+                    <div class="item" data-brand="{{ val.brand_name }}" data-config="{{ val.config.val|json_encode }}" data-index="{{ val.index }}" data-isSelected="0">
+                        <div>{{ val.brand_name }}</div>
+                        <div><img src="{{ val.brand_img }}"></div>
+                        {% for v in val.config.content %}
+                        <div>{{ v }}</div>
+                        {% endfor %}
+                        <div><img src="{{ val.car_info }}"></div>
+                    </div>
+                    {% endfor %}
+                    <div class="item none">
+                        <div>以</div>
+                        <div>上</div>
+                        <div>都</div>
+                        <div>不</div>
+                        <div>选</div>
+                        <div>择</div>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+            <hr>
+            <div id="footer">© 零点有数 2018</div>
+        </div>
+    </body>
+</html>
